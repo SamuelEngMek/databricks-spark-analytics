@@ -150,21 +150,44 @@ walmart_pd.head()
 
 # COMMAND ----------
 
+count_843 = walmart_pd[walmart_pd['product_id'] == 843]
+count_843
+
+# COMMAND ----------
+
 # MAGIC %md
-# MAGIC ## Converter para DataFrame do PySpark e Salvar em Parquet
+# MAGIC ### Converter para DataFrame do PySpark e Salvar em Parquet com Particionamento
 # MAGIC
-# MAGIC Após realizar as transformações e análises no **DataFrame Pandas**, podemos convertê-lo para um **DataFrame PySpark** para aproveitarmos o poder de processamento distribuído do Spark, especialmente útil quando lidamos com grandes volumes de dados.
+# MAGIC Após realizar as transformações e análises no DataFrame Pandas, podemos convertê-lo para um DataFrame PySpark para aproveitar o poder de processamento distribuído do Spark. Nesse processo, também podemos salvar os dados em formato **Parquet**, que é eficiente para consultas e compressão, além de particioná-los por colunas específicas para facilitar futuras consultas e análises.
 # MAGIC
-# MAGIC A função `createDataFrame()` do PySpark é utilizada para converter o DataFrame Pandas em um DataFrame PySpark. Em seguida, o DataFrame é salvo em formato **Parquet**, um formato de armazenamento eficiente para grandes volumes de dados.
+# MAGIC Neste caso, particionamos os dados por **ano** e **mês** (extraídos da coluna `transaction_date`) e por **localização da loja** (`store_location`). Isso cria uma estrutura de diretórios hierárquica, que melhora a organização e o desempenho em consultas distribuídas.
 # MAGIC
-# MAGIC O caminho onde os dados serão salvos é especificado na variável `path_temp`, e usamos o método `write.parquet()` para gravar os dados no DBFS (Databricks File System).
+# MAGIC #### Etapas:
+# MAGIC 1. **Conversão para PySpark DataFrame**:
+# MAGIC    Utilizamos a função `createDataFrame()` do PySpark para converter o DataFrame Pandas.
+# MAGIC
+# MAGIC 2. **Extração de Ano e Mês**:
+# MAGIC    Adicionamos duas novas colunas (`year` e `month`) derivadas da coluna `transaction_date`.
+# MAGIC
+# MAGIC 3. **Particionamento e Salvamento**:
+# MAGIC    Usamos o método `.write.partitionBy()` para salvar os dados em formato **Parquet** particionados por **ano**, **mês**, e **localização da loja** no Databricks File System (DBFS).
+# MAGIC
 # MAGIC
 
 # COMMAND ----------
 
-# Converter para DataFrame do PySpark
+# Converter o DataFrame do Pandas para Spark DataFrame
 walmart_spark_df = spark.createDataFrame(walmart_pd)
+
+# Adicionar colunas de ano e mês extraídas de transaction_date
+from pyspark.sql.functions import year, month
+
+walmart_spark_df = walmart_spark_df.withColumn("year", year(walmart_spark_df["transaction_date"]))
+walmart_spark_df = walmart_spark_df.withColumn("month", month(walmart_spark_df["transaction_date"]))
+
 # Caminho para salvar no DBFS local
-path_temp = '/tmp/dados_transformed.parquet'
-# Salvar em Parquet
-walmart_spark_df.write.parquet(path_temp)
+path_partitioned = '/Data/dados_transformed_partitioned.parquet'
+
+# Salvar particionado por ano, mês e localização da loja
+walmart_spark_df.write.partitionBy("year", "month", "store_location").parquet(path_partitioned)
+
