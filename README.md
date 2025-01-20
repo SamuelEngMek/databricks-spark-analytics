@@ -9,6 +9,7 @@ Este projeto utiliza dados do Walmart para realizar análises de estoque, previs
 
 ### 2. Clonagem do Repositório
 - Clone este repositório para dentro do ambiente do Databricks.
+
 ```git clone https://github.com/SamuelEngMek/databricks-spark-analytics.git```
 
 ### 3. Inicializar o Cluster
