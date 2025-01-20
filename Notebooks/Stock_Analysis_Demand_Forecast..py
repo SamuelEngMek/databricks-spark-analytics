@@ -21,7 +21,7 @@ from pyspark.sql import SparkSession
 from pyspark.sql.functions import col, sum, abs, month, avg, when
 
 # Carregar os dados como PySpark DataFrame
-df = spark.read.parquet("/data/dados_transformed_partitioned.parquet", header=True, inferSchema=True)
+df = spark.read.parquet("dbfs:/Data/dados_transformed_partitioned.parquet", header=True, inferSchema=True)
 
 # Exibir o esquema do DataFrame
 df.printSchema()
