@@ -2,6 +2,12 @@
 
 Este projeto utiliza dados do Walmart para realizar análises de estoque, previsões de demanda e outras métricas importantes relacionadas ao desempenho de vendas. A seguir, estão as instruções para execução do projeto.
 
+## Dashboard Desenvolvido
+
+Abaixo está uma prévia do dashboard que será desenvolvido neste projeto. A imagem está salva dentro do repositório e pode ser encontrada no arquivo `dashboard_preview.png`.
+
+![Dashboard Preview](dashboard_preview.png)
+
 ## Passos para Execução
 
 ### 1. Upload dos Dados
@@ -10,7 +16,9 @@ Este projeto utiliza dados do Walmart para realizar análises de estoque, previs
 ### 2. Clonagem do Repositório
 - Clone este repositório para dentro do ambiente do Databricks.
 
-``` git clone https://github.com/SamuelEngMek/databricks-spark-analytics.git ```
+```bash
+git clone https://github.com/SamuelEngMek/databricks-spark-analytics.git
+```
 
 ### 3. Inicializar o Cluster
 - Inicie o cluster no Databricks.
@@ -58,17 +66,17 @@ SELECT * FROM seasonal_sales;
 -- Criar a tabela temporária para performance de promoções
 CREATE OR REPLACE TEMP VIEW promotion_performance AS
 SELECT * FROM parquet.`dbfs:/Data/promotion_performance.parquet`;
-SELECT * FROM promotion_performance;
+SELECT * FROM promotion_performance LIMIT 10;
 
 -- Criar a tabela temporária para erro de previsão
 CREATE OR REPLACE TEMP VIEW forecast_error AS
 SELECT * FROM parquet.`dbfs:/Data/forecast_error.parquet`;
-SELECT * FROM forecast_error;
+SELECT * FROM forecast_error LIMIT 10;
 
 -- Criar a tabela temporária para performance de lojas
 CREATE OR REPLACE TEMP VIEW store_performance AS
 SELECT * FROM parquet.`dbfs:/Data/store_performance.parquet`;
-SELECT * FROM store_performance;
+SELECT * FROM store_performance LIMIT 10;
 
 -- Criar a tabela temporária para vendas por produto
 CREATE OR REPLACE TEMP VIEW product_sales AS
